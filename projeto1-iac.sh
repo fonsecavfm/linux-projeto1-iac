@@ -1,44 +1,34 @@
 #!/bin/bash
 
-total=10
-progresso=0
+echo "Diretórios"
 
-# Função para imprimir a barra de progresso
-imprimir_barra_progresso() {
-  local cor_barra="\e[44m"  # Cor de fundo azul
-  local cor_progresso="\e[42m"  # Cor de fundo verde
-  local cor_reset="\e[0m"  # Reset de cor
+mkdir /publico /adm /ven /sec
 
-  local largura_tela=$(tput cols)
-  local largura_barra=$((largura_tela - 10))
+echo "Grupos"
 
-  local porcentagem=$(($progresso * 100 / $total))
-  local qtd_preenchida=$((largura_barra * $progresso / $total))
-  local qtd_faltante=$((largura_barra - qtd_preenchida))
+groupadd GRP_ADM GRP_VEN GRP_SEC
 
-  printf "Progresso: [%-${largura_barra}s] %3d%%" \
-         "${cor_progresso}$(printf '=%.0s' $(seq $qtd_preenchida))${cor_reset}${cor_barra}$(printf '=%.0s' $(seq $qtd_faltante))${cor_reset}" \
-         $porcentagem
-}
+echo "Permissões e Associações dos diretórios e grupos"
 
-# Limpar a tela antes de exibir a barra de progresso
-clear
+chown root:GRP_ADM /adm
+chown root:GRP_VEN /ven
+chown root:GRP_SEC /sec
 
-# Loop para simular o progresso
-while [ $progresso -lt $total ]; do
-  # Atualizar o progresso
-  progresso=$((progresso + 1))
+chmod 770 /adm /ven /sec
+chmod 777 /publico
 
-  # Imprimir a barra de progresso
-  imprimir_barra_progresso
+echo "Usuários"
 
-  # Aguardar um curto período de tempo para simular o progresso
-  sleep 0.5
-done
+useradd carlos -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_ADM
+useradd maria -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_ADM
+useradd joao -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_ADM
 
-# Imprimir a barra de progresso completa em verde
-imprimir_barra_progresso
-echo
+useradd debora -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_VEN
+useradd sebastiana -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_VEN
+useradd roberto -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_VEN
 
-# Mensagem de conclusão
-echo "Concluído!"
+useradd josefina -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_SEC
+useradd amanda -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_SEC
+useradd rogerio -m -s /bin/bash -p $(openssl passwd -crypt Senha123) -G GRP_SEC
+
+echo -e "\033[0;32mConcluído!\033[0m"
